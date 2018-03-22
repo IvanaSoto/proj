@@ -10,7 +10,9 @@
             <li class="list-group-item">
                 <a href="/ideas/{{ $idea->id }}"> {{ $idea->title }} </a>
                 <a href="/ideas/{{ $idea->id }}/edit" class="btn btn-primary float-right"> Editar </a>
-                <a href="/ideas/{{ $idea->id }}/delete" class="btn btn-danger float-right"> Eliminar </a>
+                <button class="btn btn-danger float-right" data-id="{{ $idea->id }}" data-toggle="modal" data-target="#deleteModal">
+                    Eliminar
+                </button>
             </li>
         @endforeach
     </ul>
@@ -26,5 +28,34 @@
     <div class="text-center">
         <a href="/ideas/new" class="btn btn-primary"> Añadir idea </a>
     </div>
+
+    <form action="{{ route('destroyIdea') }}" method="POST">
+        @csrf
+        @method('DELETE')
+
+        <input type="hidden" id="ideaDeleteId">
+
+        @component('components.modal')
+            @slot('id') deleteModal @endslot
+            @slot('title') Eliminar Idea @endslot
+            @slot('content') ¿Estas seguro que quieres eliminar la idea D:? @endslot
+            @slot('footer')
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">nah</button>
+                <button type="submit" class="btn btn-danger">Si, >:D </button>
+            @endslot
+        @endcomponent
+
+    </form>
 </div>
 @endsection
+
+@section('js')
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+
+    })
+
+    </script>
+@endsection
+        

@@ -22,7 +22,7 @@ class CreateIdeaUserTable extends Migration
             $table->integer('idea_id')->unsigned();
             $table->foreign('idea_id')->references('id')->on('ideas')->onDelete('CASCADE');
             
-            $table->integer('like')->default(1);
+            $table->boolean('like')->default(true);
 
             $table->timestamps();
         });

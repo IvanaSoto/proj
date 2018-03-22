@@ -8,6 +8,13 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 
 class IdeaPolicy
 {
+
+    private function is_owner(User $user, Idea $idea)
+    {
+        return ( $user->ideas->where('user_id', $user->id)->count() > 0 );
+    }
+
+
     use HandlesAuthorization;
 
     /**
@@ -19,7 +26,7 @@ class IdeaPolicy
      */
     public function view(User $user, Idea $idea)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +37,7 @@ class IdeaPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -42,7 +49,7 @@ class IdeaPolicy
      */
     public function update(User $user, Idea $idea)
     {
-        //
+        return $this->is_owner($user, $idea);
     }
 
     /**
@@ -54,6 +61,6 @@ class IdeaPolicy
      */
     public function delete(User $user, Idea $idea)
     {
-        //
+        return $this->is_owner($user, $idea);
     }
 }

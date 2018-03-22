@@ -30,8 +30,9 @@ class IdeaController extends Controller
     public function index()
     {
         return view('idea.index', [
-            'myIdeas' => Auth::user()->ideas()->where('user_id', Auth::user()->id)->get(),
-            'ideas' => DB::table('ideas')->get()
+            'myIdeas' => Auth::user()->ideas,
+            //'ideas' => DB::table('ideas')->get()
+            'ideas' => Idea::all()
         ]);
     }
 
@@ -42,6 +43,8 @@ class IdeaController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Idea::class);
+
         return view('idea.create');
     }
 
@@ -53,14 +56,19 @@ class IdeaController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Idea::class);
+
         $this->validate_idea($request);
 
         $idea = Idea::create([
             'title' => $request->title,
-            'text' => $request->text
+            'text' => $request->text,
+            'user_id' => Auth::user()->id
         ]);
         
-        Auth::user()->ideas()->attach( $idea );
+        Auth::user()->agreements()->attach( $idea );
+
+        flash('La idea se ha creado correctamente')->success();
 
         return redirect()->action('IdeaController@index');
 
@@ -74,9 +82,11 @@ class IdeaController extends Controller
      */
     public function show(Idea $idea)
     {
+        $this->authorize('view', $idea);
+
         return view('idea.show', [
             'idea' => $idea,
-            'count' => $idea->user()->where('like', 1)->count()
+            'count' => $idea->agreements->where('pivot.like', true)->count()
         ]);
     }
 
@@ -88,6 +98,8 @@ class IdeaController extends Controller
      */
     public function edit(Idea $idea)
     {
+        $this->authorize('update', Idea::class);
+
         return view('idea.edit', [
             'idea' => $idea
         ]);
@@ -102,6 +114,8 @@ class IdeaController extends Controller
      */
     public function update(Request $request, Idea $idea)
     {
+        $this->authorize('update', Idea::class);
+
         $this->validate_idea($request);
 
         $idea->update([
@@ -120,6 +134,8 @@ class IdeaController extends Controller
      */
     public function destroy(Idea $idea)
     {
+        $this->authorize('delete', $idea);
+
         $idea->delete();
         return redirect()->action('IdeaController@index');
     }
@@ -133,7 +149,7 @@ class IdeaController extends Controller
     public function like(Idea $idea)
     {
                 
-        Auth::user()->ideas()->attach( $idea );
+        Auth::user()->agreements()->attach( $idea );
 
         return redirect()->action('IdeaController@index');
     }
@@ -147,7 +163,7 @@ class IdeaController extends Controller
     public function dislike(Idea $idea)
     {
         
-        Auth::user()->ideas()->attach( $idea, ['like' => 0] );
+        Auth::user()->agreements()->attach( $idea, ['like' => false] );
 
         return redirect()->action('IdeaController@index');
     }

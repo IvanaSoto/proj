@@ -27,8 +27,13 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function ideas()
+    public function agreements()
     {
         return $this->belongsToMany('App\Idea')->withTimestamps()->withPivot('like');
+    }
+
+    public function ideas()
+    {
+        return $this->hasMany('App\Idea');
     }
 }

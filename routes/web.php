@@ -26,7 +26,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/ideas/{idea}', 'IdeaController@show');
 	Route::get('/ideas/{idea}/edit', 'IdeaController@edit');
 	Route::put('/ideas/{idea}/edit', 'IdeaController@update')->name('updateIdea');
-	Route::get('/ideas/{idea}/delete', 'IdeaController@destroy');
+	Route::delete('/ideas', 'IdeaController@destroy')->name('destroyIdea');
 
 	Route::get('/ideas/{idea}/like', 'IdeaController@like');
 	Route::get('/ideas/{idea}/dislike', 'IdeaController@dislike');

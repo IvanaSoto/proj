@@ -17,6 +17,8 @@ class CreateIdeasTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('text')->nullable()->default(null);
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamps();
         });
     }
